@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#eb4f38</color>
+    <color name="colorPrimaryDark">#FF0714</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="red">#eb4f38</color>
+    <color name="grey_line">#e5e5e5</color>//描边及轮廓线颜色
+    <color name="black">#0a0909</color>
+    <color name="milk_white">#F5F5F5</color>
+    <color name="white">#fffefe</color>
+    <color name="font_light">#464e76</color>
+    <color name="shopping_list_bg">#D8D0CF</color>
+    <color name="shop_bg">#FF0714</color>
+    <color name="textColor_gray">#cccccc</color>
+    <color name="register_bg_color">#F7F7F7</color>
+    <color name="register_hint_text_color">#AEAEAE</color>
+    <color name="detail_buy_color">#ff9600</color>
+    <color name="login_btn_text_color">#0fc4d9</color>
+    <color name="main_yellow">#ffa800</color>//主色调2（凸显文字）
+    <color name="grey_btn_color_pressed">#ffd8d8d8</color>
+    <color name="grey_btn_color_disable">#7fd8d8d8</color>
+    <color name="blue">#7fa9ff</color>
+</resources>

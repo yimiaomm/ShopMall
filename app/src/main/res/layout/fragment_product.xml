@@ -1,0 +1,191 @@
+<ScrollView
+    android:orientation="vertical"
+    tools:context="cn.shoppingmall.fragment.productFrag.ProductFragment"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+      <com.daimajia.slider.library.SliderLayout
+          android:id="@+id/slider"
+          android:layout_width="match_parent"
+          android:layout_height="180dp"
+          app:auto_cycle="true"
+          app:indicator_visibility="visible"
+          app:pager_animation="Accordion"
+          app:pager_animation_span="1100" />
+
+      <TextView
+          android:id="@+id/tv_product_content"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="10dp"
+          android:layout_marginLeft="20dp"
+          android:layout_marginRight="20dp"
+          android:layout_marginTop="10dp"
+          android:ellipsize="end"
+          android:lines="2" />
+
+      <TextView
+          android:id="@+id/tv_price"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="10dp"
+          android:layout_marginLeft="20dp"
+          android:textColor="@color/red"
+          tools:text="2200.00" />
+
+      <include layout="@layout/layout_greay_line" />
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="10dp"
+          android:layout_marginTop="10dp"
+          android:orientation="horizontal">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="20dp"
+              android:text="已选：" />
+
+          <TextView
+              android:id="@+id/tv_product_style"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="20dp"
+              android:layout_weight="1"
+              android:drawableRight="@mipmap/rigntarrow"
+              android:gravity="center_vertical"
+              android:paddingRight="20dp"
+              tools:text="1.83克（含工费137元），1件" />
+      </LinearLayout>
+
+      <include layout="@layout/layout_greay_line" />
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="10dp"
+          android:layout_marginTop="10dp"
+          android:orientation="horizontal">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="20dp"
+              android:text="送至：" />
+
+          <TextView
+              android:id="@+id/tv_address"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="20dp"
+              android:layout_weight="1"
+              android:drawableRight="@mipmap/rigntarrow"
+              android:gravity="center_vertical"
+              android:paddingRight="20dp"
+              tools:text="河南 郑州 金水区" />
+      </LinearLayout>
+
+      <TextView
+          android:id="@+id/tv_is_stock"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="20dp"
+          android:textColor="@color/red"
+          tools:text="有货" />
+
+      <View
+          android:layout_width="match_parent"
+          android:layout_height="1dp"
+          android:layout_marginTop="10dp"
+          android:background="@color/grey_line" />
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="10dp"
+          android:layout_marginTop="10dp"
+          android:orientation="horizontal">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="20dp"
+              android:text="运费：" />
+
+          <TextView
+              android:id="@+id/tv_freight"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="20dp"
+              tools:text="免运费" />
+
+      </LinearLayout>
+      <View
+          android:layout_width="match_parent"
+          android:layout_height="1dp"
+          android:layout_marginTop="10dp"
+          android:background="@color/grey_line" />
+      <LinearLayout
+          android:layout_marginBottom="10dp"
+          android:id="@+id/shopping_data_action"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="20dip"
+          android:layout_marginRight="10dip"
+          android:gravity="center_vertical"
+          android:orientation="horizontal">
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="选择数量："/>
+          <ImageView
+              android:id="@+id/shopping_product_sum_sub"
+              android:layout_width="30dip"
+              android:layout_height="30dip"
+              android:layout_marginLeft="10dip"
+              android:layout_marginRight="10dip"
+              android:background="@drawable/dialog_action_sum_sub"
+              android:clickable="true" />
+
+          <TextView
+              android:id="@+id/shopping_product_sum"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="10dip"
+              android:layout_marginRight="10dip"
+              android:text="1"
+              android:textColor="@color/black"
+              android:textSize="@dimen/dimen_17" />
+
+
+          <ImageView
+              android:id="@+id/shopping_product_sum_add"
+              android:layout_width="30dip"
+              android:layout_height="30dip"
+              android:layout_marginLeft="10dip"
+              android:layout_marginRight="10dip"
+              android:background="@drawable/dialog_action_sum_add"
+              android:clickable="true" />
+
+      </LinearLayout>
+      <include layout="@layout/layout_greay_line" />
+  </LinearLayout>
+   </ScrollView>
+
+
+
+
+
+

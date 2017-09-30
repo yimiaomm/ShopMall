@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dimen_30">30sp</dimen>
+    <dimen name="dimen_24">24sp</dimen>
+    <dimen name="dimen_20">20sp</dimen>
+    <dimen name="dimen_18">18sp</dimen>
+    <dimen name="dimen_17">17sp</dimen>
+    <dimen name="dimen_16">16sp</dimen>
+    <dimen name="dimen_15">15sp</dimen>
+    <dimen name="dimen_14">14sp</dimen>
+    <dimen name="dimen_13">13sp</dimen>
+    <dimen name="dimen_12">12sp</dimen>
+    <dimen name="buttonCornerSize">2.0dip</dimen>
+</resources>
