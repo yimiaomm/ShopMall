@@ -79,11 +79,35 @@ public abstract class OrderBaseFragment extends Fragment {
 
     private void getOrderListResult(Call<ResponseBody> responseBody) {
         responseBody.enqueue(new Callback<ResponseBody>() {
+
+            private OrderListAdapter adapter;
+
             @Override
             public void onResponse(Response<ResponseBody> response) {
                 try {
                     String result = response.body().string().toString();
                     OrderListBean bean = MyApplication.gson.fromJson(result,OrderListBean.class);
+                    if (bean.isSuccess().equals("true")){
+                        if (bean.getData()!=null){
+                            List<OrderListBean.DataBean.DataListBean>list = bean.getData().getDataList();
+                            if (list.size()>0){
+                                adapter = new OrderListAdapter(list,getActivity());
+                                int page = bean.getData().getPageCount();
+                                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                recycler_view.setLayoutManager(layoutManager);
+
+                                recycler_view.setAdapter(adapter);
+                                adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(View view, int position) {
+                                        ToastUtils.showToast(position+"");
+                                    }
+                                });
+                            }
+                        }
+                    }else {
+                        ToastUtils.showToast(bean.getMsg());
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -97,32 +121,8 @@ public abstract class OrderBaseFragment extends Fragment {
     }
     private void initData() {
         getOrderList();
-        List<OrderListBean> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            OrderListBean bean = new OrderListBean();
-            bean.setOrderId("1000456");
-            bean.setOrderStatus("未付款");
-            bean.setOrderImageUrl("http://img02.liwushuo.com/image/150615/urgs9vy8a.png-pw144");
-            bean.setOrderContent("这是一个测试的商品，" +
-                    "需要测试行数为两行，" +
-                    "孝悌之至通于神明光于四海无所不通，" +
-                    "身体发肤受之父母不敢毁伤孝之始也，" +
-                    "立身行道扬名于后世以显父母孝之终也");
-            bean.setOrderNewPrice("199");
-            bean.setOrderOldPrice("356");
-            bean.setOrderCount("2");
-            list.add(bean);
-        }
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recycler_view.setLayoutManager(layoutManager);
-        OrderListAdapter adapter = new OrderListAdapter(list, getActivity());
-        recycler_view.setAdapter(adapter);
-        adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                ToastUtils.showToast(position+"");
-            }
-        });
+
+
     }
 
 

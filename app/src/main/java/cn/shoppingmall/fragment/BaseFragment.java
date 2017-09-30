@@ -13,6 +13,8 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.shoppingmall.bean.DataEntity;
+import cn.shoppingmall.greenDao.GreenDaoUtlis;
 
 /**
  * Created by ${易淼} on 2017/8/24.
@@ -26,7 +28,7 @@ public abstract class BaseFragment extends Fragment {
     protected Context cxt;
     protected ProgressDialog mDialog;
     protected static View view;
-
+    protected DataEntity userinfo;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -37,6 +39,12 @@ public abstract class BaseFragment extends Fragment {
         showDialog();
         init();
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        userinfo =new GreenDaoUtlis(cxt).queryDefult();
     }
 
     protected abstract int getLayoutId();

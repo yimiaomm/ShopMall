@@ -162,7 +162,7 @@ public class OrderListActivity extends BaseActivity {
                         alphViewNoPay.removeShow();
                     }
 
-                    ToastUtils.showToast(result);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
