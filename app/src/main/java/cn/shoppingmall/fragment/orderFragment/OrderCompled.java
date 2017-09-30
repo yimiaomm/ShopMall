@@ -3,12 +3,12 @@ package cn.shoppingmall.fragment.orderFragment;
 import android.view.View;
 
 /**
- * Created by ${易淼} on 2017/8/31.
+ * Created by ${易淼} on 2017/9/30.
  * 电话：15036145858
  * 邮箱：11058289@qq.com
  */
 
-public class OrderPaymentFragment extends OrderBaseFragment {
+public class OrderCompled extends OrderBaseFragment{
     @Override
     protected View getContentView() {
         return view;
@@ -16,6 +16,6 @@ public class OrderPaymentFragment extends OrderBaseFragment {
 
     @Override
     protected void initView() {
-        ORDER_SUTTAS = "2,3";
+        ORDER_SUTTAS = "0,4";
     }
 }

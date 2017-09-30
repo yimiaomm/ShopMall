@@ -38,89 +38,109 @@
             android:layout_alignParentRight="true" />
     </RelativeLayout>
 
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nest_scrool_view"
+        android:fillViewport="true"
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical">
-<TextView
-    android:visibility="gone"
-    android:id="@+id/tv_noAddress"
-    android:layout_margin="20dp"
-    android:gravity="center"
-    android:text="去添加收货地址"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:drawableRight="@mipmap/rigntarrow"/>
+        android:layout_height="wrap_content">
         <LinearLayout
-            android:id="@+id/ll_city"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="收货" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textColor="@color/blue"
-                tools:text="【默认】" />
-
-            <TextView
-                android:id="@+id/tv_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:textColor="@color/black"
-                tools:text="河南省郑州市郑东新区商务内环" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_contast"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="地址" />
-
-            <TextView
-                android:id="@+id/tv_address_and_contast"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:drawableRight="@mipmap/rigntarrow"
-                android:ellipsize="end"
-                android:lines="2"
-                android:textColor="@color/black"
-                tools:text="内环外环交叉口4578221号\n周杰伦     15145636397" />
+                android:layout_height="120dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/tv_noAddress"
+                    android:layout_margin="20dp"
+                    android:gravity="center"
+                    android:text="去添加收货地址"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableRight="@mipmap/rigntarrow"/>
+
+                <LinearLayout
+
+                    android:id="@+id/ll_city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_shou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="收货" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="@color/blue"
+                        tools:text="【默认】" />
+
+                    <TextView
+                        android:id="@+id/tv_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textColor="@color/black"
+                        tools:text="河南省郑州市郑东新区商务内环" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_contast"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="地址" />
+
+                    <TextView
+                        android:id="@+id/tv_address_and_contast"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:drawableRight="@mipmap/rigntarrow"
+                        android:ellipsize="end"
+                        android:lines="2"
+                        android:textColor="@color/black"
+                        tools:text="内环外环交叉口4578221号\n周杰伦     15145636397" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:src="@mipmap/line" />
+            </LinearLayout>
+
+           <RelativeLayout
+               android:descendantFocusability="blocksDescendants"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content">
+               <android.support.v7.widget.RecyclerView
+                   android:id="@+id/recycler_view"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                    />
+           </RelativeLayout>
         </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:src="@mipmap/line" />
-    </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+    </android.support.v4.widget.NestedScrollView>
 
     <View
         android:layout_width="match_parent"

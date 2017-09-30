@@ -2,6 +2,7 @@ package cn.shoppingmall.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.R.attr.data;
 import static cn.shoppingmall.R.id.mRecyclerView;
 
 public class ShopCarDeatil extends BaseActivity {
@@ -60,10 +65,13 @@ public class ShopCarDeatil extends BaseActivity {
     LinearLayout llContast;
     private DataEntity entity;
     private String addID;
-
+    private TextView tv_shou;
+    private NestedScrollView nest_scrool_view;
     @Override
     protected void init() {
-
+        tv_shou = (TextView) findViewById(R.id.tv_shou);
+        nest_scrool_view = (NestedScrollView) findViewById(R.id.nest_scrool_view);
+        nest_scrool_view.smoothScrollTo(0,0);
         ShopCarBean.DataEntity data = (ShopCarBean.DataEntity) getIntent().getBundleExtra("bundle").getSerializable("CartBean");
         tvPrice.setText(data.getTotalPrice());
         List<ShopCarBean.DataEntity.ShopCartListEntity> list = data.getShopCartList();
@@ -141,8 +149,20 @@ public class ShopCarDeatil extends BaseActivity {
             public void onResponse(Response<ResponseBody> response) {
                 try {
                     String result = response.body().string();
-                    Log.e("", result);
+                    JSONObject object = new JSONObject(result);
+                    String success = object.has("success")?object.getString("success"):"";
+                    String msg = object.has("msg")?object.getString("msg"):"";
+                    String data = object.has("data")?object.getString("data"):"";
+                    if ("true".equals(success)){
+                        Intent intent = new Intent(ShopCarDeatil.this,OrderListActivity.class);
+                        intent.putExtra("orderID",data);
+                        startActivity(intent);
+                    }else {
+                        ToastUtils.showToast(msg);
+                    }
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
@@ -186,10 +206,12 @@ public class ShopCarDeatil extends BaseActivity {
                             tvNoAddress.setVisibility(View.VISIBLE);
                             llCity.setOrientation(View.GONE);
                             llContast.setVisibility(View.GONE);
+                            tv_shou.setVisibility(View.GONE);
                         }else {
                             tvNoAddress.setVisibility(View.GONE);
                             llCity.setOrientation(View.VISIBLE);
                             llContast.setVisibility(View.VISIBLE);
+                            tv_shou.setVisibility(View.VISIBLE);
                         }
 
 

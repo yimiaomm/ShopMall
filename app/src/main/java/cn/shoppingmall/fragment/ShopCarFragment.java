@@ -484,7 +484,7 @@ public class ShopCarFragment extends BaseFragment {
                         }
                     }
 
-                    specialUpdate();
+//                    specialUpdate();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

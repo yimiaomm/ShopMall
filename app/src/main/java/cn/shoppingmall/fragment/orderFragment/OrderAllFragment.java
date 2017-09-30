@@ -17,6 +17,6 @@ public class OrderAllFragment extends OrderBaseFragment {
 
     @Override
     protected void initView() {
-
+    ORDER_SUTTAS = "0,1,2,3,4";
     }
 }
