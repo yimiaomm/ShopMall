@@ -1,6 +1,7 @@
 package cn.shoppingmall.fragment.orderFragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,7 +45,8 @@ public abstract class OrderBaseFragment extends Fragment {
     protected View view;
     private EasyRecyclerView recycler_view;
     protected static String ORDER_SUTTAS = "";
-    private DataEntity userinfo;
+    private static DataEntity userinfo;
+    private static OrderListAdapter adapter;
 
     @Nullable
     @Override
@@ -66,12 +68,12 @@ public abstract class OrderBaseFragment extends Fragment {
 //                timestamp(string, optional): *时间戳,
 //                nonce(string, optional):随机数,
 //                signature(string, optional):加密签名
-        Map<String,String>map = new HashMap<>();
-        map.put("UserId",userinfo.getUserId());
-        map.put("OrderStatus",ORDER_SUTTAS);
-        map.put("pageIndex","1");
-        map.put("pageSize","10");
-        map.put("Token",userinfo.getToken());
+        Map<String, String> map = new HashMap<>();
+        map.put("UserId", userinfo.getUserId());
+        map.put("OrderStatus", ORDER_SUTTAS);
+        map.put("pageIndex", "1");
+        map.put("pageSize", "10");
+        map.put("Token", userinfo.getToken());
         map = NetUitls.getHashMapData(map);
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         getOrderListResult(RetrofitHttp.getRetrofit(builder.build()).getOrderList(map));
@@ -79,19 +81,16 @@ public abstract class OrderBaseFragment extends Fragment {
 
     private void getOrderListResult(Call<ResponseBody> responseBody) {
         responseBody.enqueue(new Callback<ResponseBody>() {
-
-            private OrderListAdapter adapter;
-
             @Override
             public void onResponse(Response<ResponseBody> response) {
                 try {
                     String result = response.body().string().toString();
-                    OrderListBean bean = MyApplication.gson.fromJson(result,OrderListBean.class);
-                    if (bean.isSuccess().equals("true")){
-                        if (bean.getData()!=null){
-                            List<OrderListBean.DataBean.DataListBean>list = bean.getData().getDataList();
-                            if (list.size()>0){
-                                adapter = new OrderListAdapter(list,getActivity());
+                    OrderListBean bean = MyApplication.gson.fromJson(result, OrderListBean.class);
+                    if (bean.isSuccess().equals("true")) {
+                        if (bean.getData() != null) {
+                            List<OrderListBean.DataBean.DataListBean> list = bean.getData().getDataList();
+                            if (list.size() > 0) {
+                                adapter = new OrderListAdapter(list, getActivity());
                                 int page = bean.getData().getPageCount();
                                 LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
                                 recycler_view.setLayoutManager(layoutManager);
@@ -100,12 +99,12 @@ public abstract class OrderBaseFragment extends Fragment {
                                 adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(View view, int position) {
-                                        ToastUtils.showToast(position+"");
+                                        ToastUtils.showToast(position + "");
                                     }
                                 });
                             }
                         }
-                    }else {
+                    } else {
                         ToastUtils.showToast(bean.getMsg());
                     }
                 } catch (IOException e) {
@@ -119,12 +118,89 @@ public abstract class OrderBaseFragment extends Fragment {
             }
         });
     }
+    private static void specialUpdate() {
+        Handler handler = new Handler();
+        final Runnable r = new Runnable() {
+            public void run() {
+                if (adapter!=null)
+                    adapter.notifyDataSetChanged();
+            }
+        };
+        handler.post(r);
+    }
     private void initData() {
         getOrderList();
-
-
     }
 
+    public static void deleteOrder(String id) {
+//                ID (integer, optional): *要删除的数据行ID,
+//                UserId (string, optional): *用户名,
+//                Token (string, optional): *登录凭证,
+        Map<String,String>map = new HashMap<>();
+        map.put("ID",id);
+        map.put("UserId",userinfo.getUserId());
+        map.put("Token",userinfo.getToken());
+        map = NetUitls.getHashMapData(map);
+        OkHttpClient.Builder builder= new OkHttpClient.Builder();
+
+        deleteResult(RetrofitHttp.getRetrofit(builder.build()).delorderForm(map));
+    }
+
+    private static void deleteResult(Call<ResponseBody> call) {
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Response<ResponseBody> response) {
+                try {
+                    String result = response.body().string().toString();
+                    ToastUtils.showToast(result);
+                    specialUpdate();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+    }
+
+    public static void updataOrder(String id,String newStatus,String oldStatus) {
+//                ID(integer, optional): *订单ID,
+//                NewStatus(integer, optional): *变更后的订单状态(0.已关闭 1. 未付款 2. 已付款 3. 已发货 4. 交易完成)
+//        OldStatus(integer, optional): *变更前的订单状态(0.已关闭 1. 未付款 2. 已付款 3. 已发货 4. 交易完成)
+//        Token(string, optional): *登录凭证,
+//                timestamp(string, optional): *时间戳,
+//                nonce(string, optional):随机数,
+//                signature(string, optional):加密签名
+        Map<String,String>map = new HashMap<>();
+        map.put("ID",id);
+        map.put("NewStatus",newStatus);
+        map.put("OldStatus",oldStatus);
+        map.put("Token",userinfo.getToken());
+        map = NetUitls.getHashMapData(map);
+        OkHttpClient.Builder builder= new OkHttpClient.Builder();
+        updataResult(RetrofitHttp.getRetrofit(builder.build()).upStatus(map));
+    }
+
+    private static void updataResult(Call<ResponseBody> call) {
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Response<ResponseBody> response) {
+                try {
+                    String result = response.body().string().toString();
+                    ToastUtils.showToast(result);
+                    specialUpdate();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+    }
 
 
     protected abstract View getContentView();

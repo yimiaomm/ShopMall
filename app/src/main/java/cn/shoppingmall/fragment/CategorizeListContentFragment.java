@@ -60,8 +60,6 @@ public class CategorizeListContentFragment extends BaseFragment {
         productName = datebean.getCategoryName();
         tv_productName.setText(productName);
         List<ClasslflyBean.DataBean.ChildCategoryBean> list = datebean.getChildCategory();
-
-
         adapter = new GridViewAdapter(getActivity(),list);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

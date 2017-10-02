@@ -14,6 +14,7 @@ import java.util.List;
 
 import cn.shoppingmall.R;
 import cn.shoppingmall.bean.OrderListBean;
+import cn.shoppingmall.fragment.orderFragment.OrderBaseFragment;
 import cn.shoppingmall.utils.BaseUtils;
 import cn.shoppingmall.viewHolder.BaseViewHolder;
 
@@ -25,6 +26,7 @@ public class OrderListAdapter extends SimpleAdapter<OrderListBean.DataBean.DataL
     private List<OrderListBean.DataBean.DataListBean> list;
     private Context mContext;
     private String orderStatus;
+    private String orderId;
 
     public OrderListAdapter(List<OrderListBean.DataBean.DataListBean> list, FragmentActivity activity) {
         super(activity, R.layout.order_list_item_layout, list);
@@ -54,6 +56,11 @@ public class OrderListAdapter extends SimpleAdapter<OrderListBean.DataBean.DataL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_left:
+                    if (orderStatus.equals("1")){
+                        OrderBaseFragment.updataOrder(orderId,"0",orderStatus);
+                    }else if (orderStatus.equals("0")){
+                        OrderBaseFragment.deleteOrder(orderId);
+                    }
                 break;
             case R.id.btn_right:
                 break;
@@ -72,7 +79,7 @@ public class OrderListAdapter extends SimpleAdapter<OrderListBean.DataBean.DataL
         setListViewHeightBasedOnChildren(listView);
         Button leftButton = viewHoder.getButton(R.id.btn_left);
         Button rightButton = viewHoder.getButton(R.id.btn_right);
-
+        orderId = item.getOrderId();
         leftButton.setOnClickListener(this);
         rightButton.setOnClickListener(this);
         orderStatus = item.getOrderStatus();
@@ -132,9 +139,6 @@ public class OrderListAdapter extends SimpleAdapter<OrderListBean.DataBean.DataL
 
     }
 
-    private void deleteOrder() {
-    }
-
 
     class OrderChildListAdapter extends ListBaseAdapter<OrderListBean.DataBean.DataListBean.OrderContentBean> {
         private List<OrderListBean.DataBean.DataListBean.OrderContentBean> list;
@@ -167,9 +171,13 @@ public class OrderListAdapter extends SimpleAdapter<OrderListBean.DataBean.DataL
             tv_newPrice.setText("¥" + item.getPrice1());
             tv_ordPrice.setText("¥" + item.getPrice2());
             tv_orderCount.setText("x" + item.getNum());
-            Picasso.with(mContext).load(item.getPicUrl()).into(iv_orderImage);
+//            Picasso.with(mContext).load(item.getPicUrl()).into(iv_orderImage);
+            Picasso.with(mContext)
+                    .load(item.getPicUrl())
+                    .resize(50, 50)
+                    .centerCrop()
+                    .error(R.mipmap.iv_nomal)
+                    .into(iv_orderImage);
         }
-
-
     }
 }

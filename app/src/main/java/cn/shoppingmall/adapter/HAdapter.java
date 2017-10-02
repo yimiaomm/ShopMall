@@ -30,5 +30,11 @@ public class HAdapter extends SimpleAdapter<RecommentBean> {
         viewHoder.getTextView(R.id.tv_title).setText(item.getImageName());
         viewHoder.getTextView(R.id.tv_price).setText(item.getPrice());
         Picasso.with(context).load(item.getImageUrl()).into(viewHoder.getImageView(R.id.iv_image));
+        Picasso.with(context)
+                .load(item.getImageUrl())
+                .resize(50, 50)
+                .centerCrop()
+                .error(R.mipmap.iv_nomal)
+                .into(viewHoder.getImageView(R.id.iv_image));
     }
 }

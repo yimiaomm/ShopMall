@@ -43,9 +43,11 @@
         <activity android:name=".activity.AddressChagerActivity" />
         <activity android:name=".activity.OrderDetailsActivity" />
         <activity android:name=".activity.ProductDetailsActivity" />
-        <activity android:name=".activity.ShopCarDeatil"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            ></activity>
+        <activity
+            android:name=".activity.ShopCarDeatil"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.AllProductActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"></activity>
     </application>
 
 </manifest>

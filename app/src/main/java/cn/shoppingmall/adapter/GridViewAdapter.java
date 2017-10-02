@@ -68,7 +68,6 @@ public class GridViewAdapter extends BaseAdapter {
         }
         if (listProductType != null && listProductType.size() > 0) {
             productType = listProductType.get(position);
-            Picasso.with(context).load(productType.getCategoryPicture()).fit().error(R.mipmap.ic_launcher).into(hoder.imageView);
             hoder.textView.setText(productType.getCategoryName());
         }
         return convertView;
@@ -76,10 +75,8 @@ public class GridViewAdapter extends BaseAdapter {
 
     private static class Hoder {
         private TextView textView;
-        private ImageView imageView;
         public Hoder(View view) {
             textView = (TextView) view.findViewById(R.id.productName_gridView);
-            imageView = (ImageView) view.findViewById(R.id.icon_gridView);
         }
     }
 }

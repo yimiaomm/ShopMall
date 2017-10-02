@@ -9,6 +9,7 @@
     android:layout_margin="10dp"
     app:elevation="1dp">
 <RelativeLayout
+    android:background="@drawable/comment_product_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -23,8 +24,6 @@
         android:layout_below="@id/iv_showpic"
         android:textSize="@dimen/dimen_15"
         android:textColor="@color/black"
-        android:textStyle="bold"
-
         android:id="@+id/tv_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

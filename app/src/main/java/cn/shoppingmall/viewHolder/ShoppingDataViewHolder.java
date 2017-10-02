@@ -86,12 +86,17 @@ public class ShoppingDataViewHolder extends BaseViewHolder<ShopCarBean.DataEntit
     public void setData(final ShopCarBean.DataEntity.ShopCartListEntity listData) {
         super.setData(data);
         this.data = listData;
+//        Picasso.with(MyApplication.getAppCtx())
+//                .load(data.getPicUrl())
+//                .error(R.mipmap.ic_launcher)
+//                .fit()
+//                .into(icon);
         Picasso.with(MyApplication.getAppCtx())
                 .load(data.getPicUrl())
-                .error(R.mipmap.ic_launcher)
-                .fit()
+                .resize(50, 50)
+                .centerCrop()
+                .error(R.mipmap.iv_nomal)
                 .into(icon);
-
         cardview.setOnClickListener(this);
         checkbox.setOnClickListener(this);
         actionAdd.setOnClickListener(this);

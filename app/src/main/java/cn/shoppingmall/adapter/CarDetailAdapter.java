@@ -35,7 +35,13 @@ public class CarDetailAdapter extends SimpleAdapter<ShopCarBean.DataEntity.ShopC
         TextView tv_prod_num = viewHoder.getTextView(R.id.tv_prod_num);
         TextView tv_prod_freigh = viewHoder.getTextView(R.id.tv_prod_freigh);
         EditText editText = (EditText) viewHoder.getView(R.id.editText);
-        Picasso.with(context).load(item.getPicUrl()).fit().into(iv_prod_pic);
+//        Picasso.with(context).load(item.getPicUrl()).fit().into(iv_prod_pic);
+        Picasso.with(context)
+                .load(item.getPicUrl())
+                .resize(50, 50)
+                .centerCrop()
+                .error(R.mipmap.iv_nomal)
+                .into(iv_prod_pic);
         tv_prod_name.setText(item.getProdName());
         tv_prod_price.setText("¥"+item.getSnapPrice());
         tv_prod_num.setText("x"+item.getBuyNum());

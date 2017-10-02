@@ -53,10 +53,13 @@ public class HorizontalListAdapter extends BaseAdapter{
         ImageView imageView = (ImageView) convertView.findViewById(R.id.iv_image);
         TextView textView1 = (TextView) convertView.findViewById(R.id.tv_price);
 //        Picasso.with(context).load(list.get(position).getPicUrl()).into(imageView);
-        Picasso.with(context).load(list.get(position).getPicUrl()).fit()
-                .error(R.mipmap.ic_launcher)
+//        Picasso.with(context).load(list.get(position).getPicUrl()).fit().error(R.mipmap.ic_launcher).into(imageView);
+        Picasso.with(context)
+                .load(list.get(position).getPicUrl())
+                .resize(50, 50)
+                .centerCrop()
+                .error(R.mipmap.iv_nomal)
                 .into(imageView);
-
         textView.setText(list.get(position).getProdName());
         textView1.setText("¥"+list.get(position).getPrice2()+"");
         return convertView;
