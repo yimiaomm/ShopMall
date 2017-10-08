@@ -96,6 +96,7 @@ public class GreenDaoUtlis {
             return dataEntity;
     }
 
+
     public DataEntity queryDefult(){
 
         DaoMaster daoMaster = new DaoMaster(getReadableDatabase());
@@ -111,13 +112,13 @@ public class GreenDaoUtlis {
     /**
      * 删除一条记录
      *
-     * @param user
+     *
      */
-    public void deleteUser(DataEntity user) {
+    public void deleteUser() {
         DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
         DaoSession daoSession = daoMaster.newSession();
         DataEntityDao userDao = daoSession.getDataEntityDao();
-        userDao.delete(user);
+        userDao.deleteAll();
     }
 
     /**

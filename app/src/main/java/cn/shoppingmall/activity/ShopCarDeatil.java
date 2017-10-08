@@ -157,6 +157,7 @@ public class ShopCarDeatil extends BaseActivity {
                         Intent intent = new Intent(ShopCarDeatil.this,OrderListActivity.class);
                         intent.putExtra("orderID",data);
                         startActivity(intent);
+                        finish();
                     }else {
                         ToastUtils.showToast(msg);
                     }

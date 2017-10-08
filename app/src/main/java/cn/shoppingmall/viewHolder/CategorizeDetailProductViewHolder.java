@@ -40,13 +40,10 @@ public class CategorizeDetailProductViewHolder extends BaseViewHolder<ListProduc
         cardView = $(R.id.categorize_detail_product_cardview);
         phoneType = $(R.id.categorize_phone_type);
     }
-
-
     @Override
     public void setData(ListProductContentModel data) {
         super.setData(data);
         this.data = data;
-//        Picasso.with(MyApplication.getAppCtx()).load(data.getImageUrl()).into(simpleDraweeView);
         Picasso.with(MyApplication.getAppCtx())
                 .load(data.getImageUrl())
                 .resize(50, 50)

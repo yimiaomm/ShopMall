@@ -310,6 +310,7 @@ public class LoginActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_cancle:
+                finish();
                 break;
             case R.id.tv_regist:
                 startActivity(new Intent(LoginActivity.this,RegisterActivity.class));

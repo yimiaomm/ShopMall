@@ -126,17 +126,17 @@ public class ShoppingDataViewHolder extends BaseViewHolder<ShopCarBean.DataEntit
 //                if (ShopCarFragment.isCheckAll.equals("0")) {
                     ShopCarFragment.updataShopCar(data.getID(),productSum.getText().toString(),carIsCheck+"");
 //                }
-                if (ShopCarFragment.ischeckAllState() && isChecked) {
-                    ShopCarFragment.checkAll.setChecked(true);
-                } else {
-                    if (ShopCarFragment.checkAll.isChecked()) {
-                        ShopCarFragment.isCheckSingle = true;
-                        ShopCarFragment.checkAll.setChecked(false);
-                    } else if (ShopCarFragment.ischeckAllState()) {
-                        ShopCarFragment.isCheckSingle = false;
-                        ShopCarFragment.checkAll.setChecked(true);
-                    }
-                }
+//                if (ShopCarFragment.ischeckAllState() && isChecked) {
+//                    ShopCarFragment.checkAll.setChecked(true);
+//                } else {
+//                    if (ShopCarFragment.checkAll.isChecked()) {
+//                        ShopCarFragment.isCheckSingle = true;
+//                        ShopCarFragment.checkAll.setChecked(false);
+//                    } else if (ShopCarFragment.ischeckAllState()) {
+//                        ShopCarFragment.isCheckSingle = false;
+//                        ShopCarFragment.checkAll.setChecked(true);
+//                    }
+//                }
             }
         });
 

@@ -9,7 +9,6 @@ import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
 
 import cn.shoppingmall.bean.ListProductContentModel;
 import cn.shoppingmall.viewHolder.CategorizeDetailProductViewHolder;
-
 /**
  * author：Anumbrella
  * Date：16/6/4 下午7:14

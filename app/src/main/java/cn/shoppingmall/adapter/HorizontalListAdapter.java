@@ -52,8 +52,6 @@ public class HorizontalListAdapter extends BaseAdapter{
         TextView textView  = (TextView) convertView.findViewById(R.id.tv_title);
         ImageView imageView = (ImageView) convertView.findViewById(R.id.iv_image);
         TextView textView1 = (TextView) convertView.findViewById(R.id.tv_price);
-//        Picasso.with(context).load(list.get(position).getPicUrl()).into(imageView);
-//        Picasso.with(context).load(list.get(position).getPicUrl()).fit().error(R.mipmap.ic_launcher).into(imageView);
         Picasso.with(context)
                 .load(list.get(position).getPicUrl())
                 .resize(50, 50)
