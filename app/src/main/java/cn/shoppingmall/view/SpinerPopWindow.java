@@ -80,7 +80,7 @@ public class SpinerPopWindow<T> extends PopupWindow {
         void setOnItemClicks(AdapterView<?> parent, View view, int position, long id);
     }
 
-    private class MyAdapter extends BaseAdapter {
+    public class MyAdapter extends BaseAdapter {
         private int selectedItems = -1;
         private List<T> list;
 

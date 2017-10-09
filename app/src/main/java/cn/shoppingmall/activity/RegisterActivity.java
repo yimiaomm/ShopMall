@@ -247,6 +247,7 @@ public class RegisterActivity extends BaseActivity {
                         return;
                     }
                     etAddress.setText(provinceName);
+                    mSpinerPopWindow.mAdapter.notifyDataSetChanged();
                     provincedata.clear();
                     getCity(provinceId);
                 }
@@ -258,6 +259,7 @@ public class RegisterActivity extends BaseActivity {
                     }
                     etAddress.append(" "+cutyName);
                     cityList.clear();
+                    mSpinerPopWindow.mAdapter.notifyDataSetChanged();
                     getCounty(cityId);
                 }
 
@@ -270,10 +272,6 @@ public class RegisterActivity extends BaseActivity {
                     etAddress.append(" "+counName);
                    mSpinerPopWindow.dismiss();
                 }
-
-
-
-
             }
         };
     }
