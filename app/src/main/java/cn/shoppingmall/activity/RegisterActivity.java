@@ -2,7 +2,12 @@ package cn.shoppingmall.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.widget.NestedScrollView;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -10,7 +15,9 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,16 +25,23 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.shoppingmall.MyApplication;
 import cn.shoppingmall.R;
+import cn.shoppingmall.bean.CityBean;
+import cn.shoppingmall.bean.CountyBean;
+import cn.shoppingmall.bean.Provincebean;
 import cn.shoppingmall.http.RetrofitHttp;
 import cn.shoppingmall.utils.BaseUtils;
 import cn.shoppingmall.utils.NetUitls;
 import cn.shoppingmall.utils.ToastUtils;
+import cn.shoppingmall.view.SpinerPopWindow;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.media.CamcorderProfile.get;
 
 /**
  * author：Anumbrella
@@ -45,8 +59,6 @@ public class RegisterActivity extends BaseActivity {
     TextView textView2;
     @BindView(R.id.et_password_again)
     EditText etPasswordAgain;
-    @BindView(R.id.tv_people)
-    EditText tvPeople;
     @BindView(R.id.et_people_num)
     EditText etPeopleNum;
     @BindView(R.id.et_address)
@@ -55,6 +67,8 @@ public class RegisterActivity extends BaseActivity {
     Button btnLogin;
     @BindView(R.id.register_info1)
     TextView registerInfo1;
+    @BindView(R.id.nest_scrool_view)
+    NestedScrollView nest_scrool_view;
     private String phone;
 
     private String password;
@@ -76,11 +90,16 @@ public class RegisterActivity extends BaseActivity {
     @BindView(R.id.service_text)
     TextView service_text;
     private String perpleNum;
+    private SpinerPopWindow mSpinerPopWindow;
+    private SpinerPopWindow.OnItemClickListeners listeners;
+    private List<Provincebean.DataEntity> provincedata;
+    private List<CityBean.DataEntity> cityList;
+    private List<CountyBean.DataEntity> countyList;
+    private String provinceId;
 
 
     @Override
     protected void init() {
-
         showDialog();
     }
 
@@ -127,8 +146,31 @@ public class RegisterActivity extends BaseActivity {
             checkUpResult = false;
             prompt = false;
         }
-    }
 
+    }
+    private  void specialUpdate(final String str) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg = new Message();
+                msg.obj = str;
+                msg.what=1;
+                handler.sendMessage(msg);
+            }
+        }).start();
+
+
+    }
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what==1){
+                String strs = (String) msg.obj;
+//                mSpinerPopWindow.setText(strs);
+            }
+        }
+    };
     private void doRegister(String pswd,String tel,String refuerid) {
 //                UserId(string, optional):用户名
 //               UserPwd(string, optional):登录密码(必填, 不少于6位)
@@ -177,19 +219,6 @@ public class RegisterActivity extends BaseActivity {
                     }else {
                         ToastUtils.showToast(msg);
                     }
-//                    for (int i = 0; i < ServiceApi.RegisterApi.length; i++) {
-//                        if (ServiceApi.RegisterApi[i][0].equals(result)) {
-//                            Toast.makeText(RegisterActivity.this, ServiceApi.RegisterApi[i][1], Toast.LENGTH_SHORT).show();
-//                            //注册成功跳转到登录
-//                            if (ServiceApi.RegisterApi[i][0].equals("0200")) {
-//                                Intent intent = new Intent();
-//                                intent.setClass(RegisterActivity.this, LoginActivity.class);
-//                                startActivity(intent);
-//                                finish();
-//                            }
-//                            break;
-//                        }
-//                    }
                 } catch (Exception io) {
 
                 }
@@ -203,8 +232,53 @@ public class RegisterActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mSpinerPopWindow = new SpinerPopWindow(RegisterActivity.this);
+        listeners = new SpinerPopWindow.OnItemClickListeners() {
+            @Override
+            public void setOnItemClicks(AdapterView<?> parent, View view, int position, long id) {
+                if (provincedata.size()!=0&&provincedata!=null){
+                    provinceId = provincedata.get(position).getProId();
+                    String provinceName = provincedata.get(position).getProName();
 
-    @OnClick({R.id.service_text, R.id.btn_back,R.id.btn_login})
+                    if (provinceId.equals("0")){
+                        return;
+                    }
+                    etAddress.setText(provinceName);
+                    provincedata.clear();
+                    getCity(provinceId);
+                }
+                if (cityList!=null&&cityList.size()!=0){
+                    String cityId = cityList.get(position).getCityId();
+                    String cutyName = cityList.get(position).getCityName();
+                    if (cityId.equals("0")){
+                        return;
+                    }
+                    etAddress.append(" "+cutyName);
+                    cityList.clear();
+                    getCounty(cityId);
+                }
+
+                if (countyList!=null&&countyList.size()!=0){
+                    String counId = countyList.get(position).getCountyId();
+                    String counName = countyList.get(position).getCountyName();
+                    if (counId.equals("0")){
+                        return;
+                    }
+                    etAddress.append(" "+counName);
+                   mSpinerPopWindow.dismiss();
+                }
+
+
+
+
+            }
+        };
+    }
+
+    @OnClick({R.id.service_text, R.id.btn_back,R.id.btn_login,R.id.et_address})
     public void clickBtn(View view) {
         switch (view.getId()) {
             case R.id.service_text:
@@ -228,11 +302,113 @@ public class RegisterActivity extends BaseActivity {
                     doRegister(password,phone,perpleNum);
                 }
                 break;
+            case R.id.et_address:
+                getprovince();
+                mSpinerPopWindow.setWidth(nest_scrool_view.getWidth());
+                mSpinerPopWindow.setHeight(nest_scrool_view.getHeight()/2);
+                mSpinerPopWindow.showAtLocation(nest_scrool_view, Gravity.BOTTOM,0,0);
+//                mSpinerPopWindow.showAsDropDown(etAddress);
+//                getCity("2");
+//                getCounty("2");
+                break;
             default:
                 break;
         }
     }
 
+    private void getprovince(){
+        Map<String, String> map = new HashMap();
+        map = NetUitls.getHashMapData(map);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        getProvinceResult(RetrofitHttp.getRetrofit(builder.build()).getProvince(map));
+    }
+    private void getProvinceResult(Call<ResponseBody>call){
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Response<ResponseBody> response) {
+                try {
+                    String result = response.body().string().toString();
+                    Provincebean beam = MyApplication.gson.fromJson(result,Provincebean.class);
+                    if (beam.getSuccess().equals("true")){
+                        provincedata = beam.getData();
+                        mSpinerPopWindow.init(provincedata);
+                        mSpinerPopWindow.setOnItemClickLineners(listeners);
+                    }else {
+                        ToastUtils.showToast(result);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
+            @Override
+            public void onFailure(Throwable t) {
 
+            }
+        });
+    }
+    private void getCity(String proId){
+        Map<String, String> map = new HashMap();
+        map.put("ProId",proId);
+        map = NetUitls.getHashMapData(map);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        getCityResult(RetrofitHttp.getRetrofit(builder.build()).getCity(map));
+    }
+    private void getCityResult(Call<ResponseBody>call){
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Response<ResponseBody> response) {
+                try {
+                    String result = response.body().string().toString();
+                    CityBean bean = MyApplication.gson.fromJson(result,CityBean.class);
+                    if (bean.getSuccess().equals("true")){
+                        cityList = bean.getData();
+                        mSpinerPopWindow.init(cityList);
+                        mSpinerPopWindow.setOnItemClickLineners(listeners);
+                    }else {
+                        ToastUtils.showToast(result);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+    }
+    private void getCounty(String CityId){
+        Map<String, String> map = new HashMap();
+        map.put("CityId",CityId);
+        map = NetUitls.getHashMapData(map);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        getCountyResult(RetrofitHttp.getRetrofit(builder.build()).getCounty(map));
+    }
+    private void getCountyResult(Call<ResponseBody>call){
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Response<ResponseBody> response) {
+                try {
+                    String result = response.body().string().toString();
+                    CountyBean bean = MyApplication.gson.fromJson(result,CountyBean.class);
+                    if (bean.getSuccess().equals("true")){
+                        countyList = bean.getData();
+                        mSpinerPopWindow.init(countyList);
+                        mSpinerPopWindow.setOnItemClickLineners(listeners);
+                    }else {
+                        ToastUtils.showToast(result);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+    }
 }

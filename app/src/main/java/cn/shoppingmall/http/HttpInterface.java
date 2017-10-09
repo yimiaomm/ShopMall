@@ -183,4 +183,22 @@ public interface HttpInterface {
     @FormUrlEncoded
     @POST("/order/payment")
     Call<ResponseBody> paymentOrder(@FieldMap Map<String, String> data);
+    /**
+     * 读取省列表
+     * */
+    @FormUrlEncoded
+    @POST("/user/getprovince")
+    Call<ResponseBody>getProvince(@FieldMap Map<String,String>map);
+    /**
+     * 读取市列表
+     * */
+    @FormUrlEncoded
+    @POST("/user/getcity")
+    Call<ResponseBody>getCity(@FieldMap Map<String,String>map);
+    /**
+     * 读取县/区列表
+     * */
+    @FormUrlEncoded
+    @POST("/user/getcounty")
+    Call<ResponseBody>getCounty(@FieldMap Map<String,String>map);
 }

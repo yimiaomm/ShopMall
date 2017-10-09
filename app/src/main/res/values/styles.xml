@@ -22,4 +22,8 @@
         <item name="contentScrim">?attr/colorPrimary</item>
     </style>
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="popupwindow_animation">
+        <item name="android:windowEnterAnimation">@anim/popupwindow_enter</item>
+        <item name="android:windowExitAnimation">@anim/popupwindow_exit</item>
+    </style>
 </resources>
