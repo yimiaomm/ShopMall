@@ -27,6 +27,7 @@ public class OrderListAdapter extends SimpleAdapter<OrderListBean.DataBean.DataL
     private Context mContext;
     private String orderStatus;
     private String orderId;
+    private String id;
 
     public OrderListAdapter(List<OrderListBean.DataBean.DataListBean> list, FragmentActivity activity) {
         super(activity, R.layout.order_list_item_layout, list);
@@ -57,12 +58,13 @@ public class OrderListAdapter extends SimpleAdapter<OrderListBean.DataBean.DataL
         switch (view.getId()) {
             case R.id.btn_left:
                     if (orderStatus.equals("1")){
-                        OrderBaseFragment.updataOrder(orderId,"0",orderStatus);
-                    }else if (orderStatus.equals("0")){
-                        OrderBaseFragment.deleteOrder(orderId);
+                        OrderBaseFragment.updataOrder(id,"0",orderStatus);
                     }
                 break;
             case R.id.btn_right:
+                if (orderStatus.equals("0")){
+                    OrderBaseFragment.deleteOrder(id);
+                }
                 break;
         }
     }
@@ -80,6 +82,7 @@ public class OrderListAdapter extends SimpleAdapter<OrderListBean.DataBean.DataL
         Button leftButton = viewHoder.getButton(R.id.btn_left);
         Button rightButton = viewHoder.getButton(R.id.btn_right);
         orderId = item.getOrderId();
+        id = item.getID();
         leftButton.setOnClickListener(this);
         rightButton.setOnClickListener(this);
         orderStatus = item.getOrderStatus();
@@ -174,9 +177,8 @@ public class OrderListAdapter extends SimpleAdapter<OrderListBean.DataBean.DataL
 //            Picasso.with(mContext).load(item.getPicUrl()).into(iv_orderImage);
             Picasso.with(mContext)
                     .load(item.getPicUrl())
-                    .resize(50, 50)
-                    .centerCrop()
                     .error(R.mipmap.iv_nomal)
+                    .fit()
                     .into(iv_orderImage);
         }
     }

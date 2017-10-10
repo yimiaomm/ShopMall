@@ -29,14 +29,16 @@ public class SpinerPopWindow<T> extends PopupWindow {
     public MyAdapter mAdapter;
     private Context ctx;
     private OnItemClickListeners listener;
+    public List<T>list;
 //    public  TextView tv_show_address;
     public SpinerPopWindow(Context context) {
         super(context);
         this.ctx = context;
         inflater = LayoutInflater.from(context);
+        init();
     }
 
-    public void init(List<T> list) {
+    public void init() {
         View view = inflater.inflate(R.layout.spiner_window_layout, null);
         setContentView(view);
         setWidth(LayoutParams.WRAP_CONTENT);
@@ -48,6 +50,11 @@ public class SpinerPopWindow<T> extends PopupWindow {
         mListView = (ListView) view.findViewById(R.id.listview);
 //        tv_show_address = (TextView) view.findViewById(R.id.tv_show_address);
 
+
+    }
+
+    public void setData(List<T> list){
+        this.list = list;
         if (mAdapter!=null){
             mListView.setAdapter(null);
             mAdapter.notifyDataSetChanged();

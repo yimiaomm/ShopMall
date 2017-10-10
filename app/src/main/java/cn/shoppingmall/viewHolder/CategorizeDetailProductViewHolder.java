@@ -46,9 +46,8 @@ public class CategorizeDetailProductViewHolder extends BaseViewHolder<ListProduc
         this.data = data;
         Picasso.with(MyApplication.getAppCtx())
                 .load(data.getImageUrl())
-                .resize(50, 50)
-                .centerCrop()
                 .error(R.mipmap.iv_nomal)
+                .fit()
                 .into(simpleDraweeView);
         name.setText(data.getTitle());
         price.setText("￥ " + data.getPrice());

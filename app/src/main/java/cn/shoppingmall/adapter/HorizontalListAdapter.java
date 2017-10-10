@@ -54,9 +54,8 @@ public class HorizontalListAdapter extends BaseAdapter{
         TextView textView1 = (TextView) convertView.findViewById(R.id.tv_price);
         Picasso.with(context)
                 .load(list.get(position).getPicUrl())
-                .resize(50, 50)
-                .centerCrop()
                 .error(R.mipmap.iv_nomal)
+                .fit()
                 .into(imageView);
         textView.setText(list.get(position).getProdName());
         textView1.setText("¥"+list.get(position).getPrice2()+"");

@@ -30,11 +30,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-/**
- * Created by ${易淼} on 2017/9/1.
- * 电话：15036145858
- * 邮箱：11058289@qq.com
- */
+
 
 public class AddressAdapter extends BaseAdapter{
     private List<AddressBean.DataEntity>list;

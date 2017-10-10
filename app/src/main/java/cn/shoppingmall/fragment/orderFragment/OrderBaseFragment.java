@@ -13,6 +13,9 @@ import android.view.ViewGroup;
 
 import com.jude.easyrecyclerview.EasyRecyclerView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +38,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.R.attr.id;
+
 /**
  * Created by ${易淼} on 2017/8/31.
  * 电话：15036145858
@@ -47,6 +52,7 @@ public abstract class OrderBaseFragment extends Fragment {
     protected static String ORDER_SUTTAS = "";
     private static DataEntity userinfo;
     private static OrderListAdapter adapter;
+    private static List<OrderListBean.DataBean.DataListBean> list;
 
     @Nullable
     @Override
@@ -88,7 +94,7 @@ public abstract class OrderBaseFragment extends Fragment {
                     OrderListBean bean = MyApplication.gson.fromJson(result, OrderListBean.class);
                     if (bean.isSuccess().equals("true")) {
                         if (bean.getData() != null) {
-                            List<OrderListBean.DataBean.DataListBean> list = bean.getData().getDataList();
+                            list = bean.getData().getDataList();
                             if (list.size() > 0) {
                                 adapter = new OrderListAdapter(list, getActivity());
                                 int page = bean.getData().getPageCount();
@@ -143,18 +149,34 @@ public abstract class OrderBaseFragment extends Fragment {
         map = NetUitls.getHashMapData(map);
         OkHttpClient.Builder builder= new OkHttpClient.Builder();
 
-        deleteResult(RetrofitHttp.getRetrofit(builder.build()).delorderForm(map));
+        deleteResult(RetrofitHttp.getRetrofit(builder.build()).delorderForm(map),id);
     }
 
-    private static void deleteResult(Call<ResponseBody> call) {
+    private static void deleteResult(Call<ResponseBody> call, final String id) {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Response<ResponseBody> response) {
                 try {
                     String result = response.body().string().toString();
+                    JSONObject object = new JSONObject(result);
+                    String success = object.has("success") ? object.getString("success") : "";
+                    String msg = object.has("msg") ? object.getString("msg") : "";
+                    if ("true".equals(success)) {
+                        specialUpdate();
+                        for (int i=0;i<list.size();i++){
+                            if (list.get(i).getID().equals(id)){
+                                list.remove(list.get(i));
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    } else {
+                        ToastUtils.showToast(msg);
+                    }
                     ToastUtils.showToast(result);
                     specialUpdate();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -180,18 +202,32 @@ public abstract class OrderBaseFragment extends Fragment {
         map.put("Token",userinfo.getToken());
         map = NetUitls.getHashMapData(map);
         OkHttpClient.Builder builder= new OkHttpClient.Builder();
-        updataResult(RetrofitHttp.getRetrofit(builder.build()).upStatus(map));
+        updataResult(RetrofitHttp.getRetrofit(builder.build()).upStatus(map),id);
     }
 
-    private static void updataResult(Call<ResponseBody> call) {
+    private static void updataResult(Call<ResponseBody> call, final String id) {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Response<ResponseBody> response) {
                 try {
                     String result = response.body().string().toString();
-                    ToastUtils.showToast(result);
-                    specialUpdate();
+                    JSONObject object = new JSONObject(result);
+                    String success = object.has("success") ? object.getString("success") : "";
+                    String msg = object.has("msg") ? object.getString("msg") : "";
+                    if ("true".equals(success)) {
+                        specialUpdate();
+                        for (int i=0;i<list.size();i++){
+                            if (list.get(i).getID().equals(id)){
+                                list.get(i).setOrderStatus("0");
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    } else {
+                        ToastUtils.showToast(msg);
+                    }
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }

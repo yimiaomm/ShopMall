@@ -54,13 +54,12 @@ public class ButtomListAdapter extends ListBaseAdapter<ButtomListBean.DataEntity
         tv_old_price.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG );
         iv_add_car.setOnClickListener(this);
 //        Picasso.with(context).load(item.getPicUrl()).into(iv_show_imager);
-//        Picasso.with(context).load(item.getPicUrl()).error(R.mipmap.iv_nomal).fit().into(iv_show_imager);
-        Picasso.with(context)
-                .load(item.getPicUrl())
-                .resize(50, 50)
-                .centerCrop()
-                .error(R.mipmap.iv_nomal)
-                .into(iv_show_imager);
+        Picasso.with(context).load(item.getPicUrl()).error(R.mipmap.iv_nomal).fit().into(iv_show_imager);
+//        Picasso.with(context)
+//                .load(item.getPicUrl())
+//                .error(R.mipmap.iv_nomal)
+//                .fit()
+//                .into(iv_show_imager);
         tv_content.setText(item.getProdName());
         tv_new_price.setText("¥"+item.getPrice1()+"");
         tv_old_price.setText("¥"+item.getPrice2()+"");
