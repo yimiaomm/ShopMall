@@ -243,6 +243,7 @@ public class RegisterActivity extends BaseActivity {
                 }
             }
         });
+        getprovince();
     }
 
     private void specialUpdate() {
@@ -279,7 +280,6 @@ public class RegisterActivity extends BaseActivity {
                 break;
             case R.id.et_address:
                 etAddress.getText().clear();
-                getprovince();
                 mSpinerPopWindow.setWidth(nest_scrool_view.getWidth());
                 mSpinerPopWindow.setHeight(nest_scrool_view.getHeight() / 2);
                 mSpinerPopWindow.showAtLocation(nest_scrool_view, Gravity.BOTTOM, 0, 0);

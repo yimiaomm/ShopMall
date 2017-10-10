@@ -81,6 +81,9 @@ public class MineFragment extends BaseFragment implements SwipeDismissBehavior.O
                         break;
                     case 3://地址管理
                         if (userInfo == null) {
+                            ToastUtils.showToast("尚未登录");
+                            intent.setClass(getActivity(), LoginActivity.class);
+                            startActivity(intent);
                             return;
                         }
                         intent.setClass(cxt, MyAddress.class);
