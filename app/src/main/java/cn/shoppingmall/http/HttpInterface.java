@@ -201,4 +201,21 @@ public interface HttpInterface {
     @FormUrlEncoded
     @POST("/user/getcounty")
     Call<ResponseBody>getCounty(@FieldMap Map<String,String>map);
+
+    /**
+     * 购物车删除多条数据
+     * */
+
+    @FormUrlEncoded
+    @POST("/shop/delshopcartmulti")
+    Call<ResponseBody>delShopCartMulti(@FieldMap Map<String,String>map);
+
+
+    /***
+     * 更改所有购物车选中状态
+     *
+     */
+    @FormUrlEncoded
+    @POST("/shop/updateshopcartmulti")
+    Call<ResponseBody>updataShopCartMulti(@FieldMap Map<String,String>map);
 }

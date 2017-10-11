@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.v7.widget.GridLayoutManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,6 +52,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.R.attr.id;
+import static android.media.CamcorderProfile.get;
 import static cn.shoppingmall.R.id.mRecyclerView;
 import static cn.shoppingmall.R.id.shopping_spend;
 
@@ -65,7 +67,8 @@ public class ShopCarFragment extends BaseFragment {
     private static EasyRecyclerView recyclerView;
     @BindView(R.id.shop_content)
     LinearLayout shopContent;
-
+    @BindView(R.id.tv_delete)
+    TextView tv_delete;
 
     @BindView(R.id.shop_total)
     TextView shop_total;
@@ -81,6 +84,8 @@ public class ShopCarFragment extends BaseFragment {
     TextView tv_freight;
     @BindView(R.id.shopping_edit)
     TextView shopping_edit;
+    @BindView(R.id.check_all)
+    CheckBox check_all;
     public static ShopCarFragment object = new ShopCarFragment();
 
 
@@ -132,38 +137,64 @@ public class ShopCarFragment extends BaseFragment {
         shopping_spend = (TextView) view.findViewById(R.id.shopping_spend);
         recyclerView = (EasyRecyclerView) view.findViewById(R.id.shopping_list_data);
         setHasOptionsMenu(true);
-//           checkAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    if (carBean!=null){
-//                        checkAllState();
-//                        shopping_spend.setText(carBean.getData().getTotalPrice());
-//                        shopping_data_count_sum.setText(carBean.getData().getTotalNum());
-//                        String strFreight = carBean.getData().getFreight();
-//                        Double douFreigh;
-//                        try{
-//                            douFreigh = Double.parseDouble(strFreight);
-//                        }catch (Exception e){
-//                            douFreigh = 0.0;
-//                        }
-//                        if (douFreigh<=0.0){
-//                            tv_freight.setText("不含运费");
-//                        }else {
-//                            tv_freight.setText("￥"+strFreight);
-//                        }
-//                    }
-//
-//                } else if (!isChecked && isCheckSingle) {
-//                    isCheckSingle = false;
-//                } else {
-//                    unCheckAll();
-//                    shopping_spend.setText(String.valueOf("0"));
-//                    shopping_data_count_sum .setText(String.valueOf("0"));
-//                }
-//            }
-//        });
+        check_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
+            }
+        });
+
+    }
+
+    private void deleteMit(){
+//        UserId (string, optional): *用户名 ,
+//                IDList (string, optional): *要删除的数据行ID列表(英文逗号隔开) ,
+//                Token (string, optional): *登录凭证 ,
+
+        if (null ==carBean){
+            ToastUtils.showToast("请添加商品");
+            return;
+        }
+        List<ShopCarBean.DataEntity.ShopCartListEntity>list = carBean.getData().getShopCartList();
+
+        Map<String,String>map = new HashMap<>();
+        map.put("UserId",userinfo.getUserId());
+        StringBuffer str = new StringBuffer();
+        for (int i = 0;i<list.size();i++){
+            String isCheck = list.get(i).getIsCheck();
+            if ("true".equals(isCheck)){
+              str.append(list.get(i).getID());
+                str.append(",");
+            }
+        }
+        if (TextUtils.isEmpty(str)){
+            ToastUtils.showToast("请选择删除商品");
+            return;
+        }
+
+        map.put("IDList",str.toString());
+        map.put("Token",userinfo.getToken());
+        map = NetUitls.getHashMapData(map);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        deleteMitResult(RetrofitHttp.getRetrofit(builder.build()).delShopCartMulti(map));
+    }
+    private void deleteMitResult(Call<ResponseBody>call){
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Response<ResponseBody> response) {
+                try {
+                    String result  = response.body().string().toString();
+                    ToastUtils.showToast(result);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
     }
 
 
@@ -308,7 +339,8 @@ public class ShopCarFragment extends BaseFragment {
 
     }
 
-    @OnClick({R.id.shopping_pay, R.id.shopping_edit})
+
+    @OnClick({R.id.shopping_pay, R.id.shopping_edit, R.id.tv_delete})
     public void click(View view) {
         switch (view.getId()) {
             case R.id.shopping_edit:
@@ -317,6 +349,9 @@ public class ShopCarFragment extends BaseFragment {
                 } else {
                     finishActionState();
                 }
+                break;
+            case R.id.tv_delete:
+                deleteMit();
                 break;
             case R.id.shopping_pay:
                 Intent intent = new Intent(getActivity(), ShopCarDeatil.class);
@@ -343,6 +378,7 @@ public class ShopCarFragment extends BaseFragment {
         shopping_edit.setText("编辑");
         isEditState = false;
         shopping_calculate_layout.setVisibility(View.VISIBLE);
+        tv_delete.setVisibility(View.GONE);
         specialUpdate();
     }
 
@@ -351,6 +387,7 @@ public class ShopCarFragment extends BaseFragment {
         shopping_edit.setText("完成");
         isEditState = true;
         shopping_calculate_layout.setVisibility(View.GONE);
+        tv_delete.setVisibility(View.VISIBLE);
         specialUpdate();
     }
 
@@ -401,7 +438,7 @@ public class ShopCarFragment extends BaseFragment {
             public void onResponse(Response<ResponseBody> response) {
                 try {
                     String result = response.body().string().toString();
-                     carBean = MyApplication.gson.fromJson(result, ShopCarBean.class);
+                    carBean = MyApplication.gson.fromJson(result, ShopCarBean.class);
 
                     if ("true".equals(carBean.getSuccess())) {
                         ToastUtils.showToast(carBean.getMsg());

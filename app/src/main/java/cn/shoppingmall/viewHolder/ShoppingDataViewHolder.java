@@ -1,6 +1,7 @@
 package cn.shoppingmall.viewHolder;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -20,9 +21,11 @@ import java.util.HashMap;
 
 import cn.shoppingmall.MyApplication;
 import cn.shoppingmall.R;
+import cn.shoppingmall.activity.ProductDetailsActivity;
 import cn.shoppingmall.adapter.ShoppingDataAdapter;
 import cn.shoppingmall.bean.ShopCarBean;
 import cn.shoppingmall.fragment.ShopCarFragment;
+import cn.shoppingmall.utils.ToastUtils;
 import cn.shoppingmall.view.PromptDialog;
 
 /**
@@ -79,7 +82,7 @@ public class ShoppingDataViewHolder extends BaseViewHolder<ShopCarBean.DataEntit
         actionSub = $(R.id.shopping_product_sum_sub);
         actionDelete = $(R.id.shopping_action_delete);
         productSum = $(R.id.shopping_product_sum);
-
+        cardview.setOnClickListener(this);
     }
 
     @Override
@@ -180,8 +183,12 @@ public class ShoppingDataViewHolder extends BaseViewHolder<ShopCarBean.DataEntit
                         .show();
 
                 break;
-
-
+            case R.id.shopping_product_cardview:
+                Intent intent = new Intent();
+                intent.setClass(MyApplication.getAppCtx(), ProductDetailsActivity.class);
+                intent.putExtra("productId",data.getID());
+                MyApplication.getAppCtx().startActivity(intent);
+                break;
         }
     }
 

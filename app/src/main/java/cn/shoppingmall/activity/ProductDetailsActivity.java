@@ -109,7 +109,6 @@ public class ProductDetailsActivity extends BaseActivity {
                         list.add(PicDetailsFragment.newInstance(prodBean));
                         ProductDetailAdapter adapter = new ProductDetailAdapter(getSupportFragmentManager(), list);
                         viewPager.setAdapter(adapter);
-                        ToastUtils.showToast(prodBean.getMsg());
                     } else {
                         ToastUtils.showToast(prodBean.getMsg());
                     }
