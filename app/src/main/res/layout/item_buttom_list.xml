@@ -9,6 +9,7 @@
     android:layout_margin="10dp"
     app:elevation="1dp">
 <RelativeLayout
+    android:id="@+id/rl_item"
     android:background="@drawable/comment_product_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

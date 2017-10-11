@@ -33,6 +33,7 @@ import cn.shoppingmall.MainActivity;
 import cn.shoppingmall.MyApplication;
 import cn.shoppingmall.R;
 import cn.shoppingmall.activity.AllProductActivity;
+import cn.shoppingmall.activity.LoginActivity;
 import cn.shoppingmall.activity.OrderListActivity;
 import cn.shoppingmall.activity.ProductDetailsActivity;
 import cn.shoppingmall.adapter.ButtomListAdapter;
@@ -40,6 +41,8 @@ import cn.shoppingmall.adapter.HomePagerAdapter;
 import cn.shoppingmall.adapter.HorizontalListAdapter;
 import cn.shoppingmall.bean.Banner;
 import cn.shoppingmall.bean.ButtomListBean;
+import cn.shoppingmall.bean.DataEntity;
+import cn.shoppingmall.greenDao.GreenDaoUtlis;
 import cn.shoppingmall.http.RetrofitHttp;
 import cn.shoppingmall.utils.NetUitls;
 import cn.shoppingmall.utils.ToastUtils;
@@ -274,6 +277,13 @@ public class HomeFragment extends BaseFragment {
                 MainActivity.pager.setCurrentItem(1);
                 break;
             case R.id.ll_order:
+                DataEntity userinfo = new GreenDaoUtlis(cxt).query();
+                if (null==userinfo){
+                    ToastUtils.showToast("尚未登陆");
+                    intent.setClass(cxt, LoginActivity.class);
+                    startActivity(intent);
+                    return;
+                }
                 intent.setClass(cxt, OrderListActivity.class);
                 startActivity(intent);
                 break;
