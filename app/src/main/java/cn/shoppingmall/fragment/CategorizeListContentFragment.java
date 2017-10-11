@@ -1,5 +1,6 @@
 package cn.shoppingmall.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.shoppingmall.R;
+import cn.shoppingmall.activity.AllProductActivity;
 import cn.shoppingmall.adapter.GridViewAdapter;
 import cn.shoppingmall.bean.ClasslflyBean;
 
@@ -39,60 +41,47 @@ public class CategorizeListContentFragment extends BaseFragment {
     private GridViewAdapter adapter;
 
 
-
     private String productName;
 
     private int icon;
 
-    public static CategorizeListContentFragment newInstance(ClasslflyBean.DataBean databean,int index) {
+    public static CategorizeListContentFragment newInstance(ClasslflyBean.DataBean databean, int index) {
 
         Bundle args = new Bundle();
-        args.putSerializable("classBean",databean);
-        args.putInt("index",index);
+        args.putSerializable("classBean", databean);
+        args.putInt("index", index);
         CategorizeListContentFragment fragment = new CategorizeListContentFragment();
         fragment.setArguments(args);
         return fragment;
     }
+
     @Override
     public void init() {
         int index = getArguments().getInt("index");
         ClasslflyBean.DataBean datebean = (ClasslflyBean.DataBean) getArguments().getSerializable("classBean");
         productName = datebean.getCategoryName();
         tv_productName.setText(productName);
-        List<ClasslflyBean.DataBean.ChildCategoryBean> list = datebean.getChildCategory();
-        adapter = new GridViewAdapter(getActivity(),list);
+        final List<ClasslflyBean.DataBean.ChildCategoryBean> list = datebean.getChildCategory();
+        adapter = new GridViewAdapter(getActivity(), list);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-//                ProductTypeModel data = productListType.get(position);
-//                Intent intent = new Intent();
-//                intent.putExtra(CategorizeDetailProductActivity.INTENT_PRODUCT_ITEM_INFO, data);
-//                intent.setClass(getContext(), CategorizeDetailProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(getActivity(), "点击了", Toast.LENGTH_LONG).show();
+                ClasslflyBean.DataBean.ChildCategoryBean data = list.get(position);
+                Intent intent = new Intent();
+                intent.putExtra("ProdType",data.getCategoryId());
+                intent.setClass(getContext(), AllProductActivity.class);
+                startActivity(intent);
             }
         });
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        unbinder = ButterKnife.bind(this, rootView);
-        return rootView;
-    }
 
     @Override
     protected int getLayoutId() {
         return R.layout.productlist_layout;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
 }

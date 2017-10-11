@@ -4,13 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ import butterknife.Unbinder;
 import cn.shoppingmall.MainActivity;
 import cn.shoppingmall.MyApplication;
 import cn.shoppingmall.R;
+import cn.shoppingmall.activity.AllProductActivity;
 import cn.shoppingmall.activity.OrderListActivity;
 import cn.shoppingmall.activity.ProductDetailsActivity;
 import cn.shoppingmall.adapter.ButtomListAdapter;
@@ -48,21 +50,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.R.attr.background;
-import static android.R.attr.data;
-
 
 public class HomeFragment extends BaseFragment {
 
 
     @BindView(R.id.slider)
     SliderLayout slider;
-
     @BindView(R.id.buttom_list)
     NoScroolGridView buttomList;
     @BindView(R.id.scrollView)
     NestedScrollView scrollView;
-
+    @BindView(R.id.tv_more_prod)
+    TextView tv_more_prod;
     @BindView(R.id.ll_all)
     LinearLayout ll_all;
     @BindView(R.id.ll_shopcar)
@@ -73,9 +72,8 @@ public class HomeFragment extends BaseFragment {
     LinearLayout ll_member;
     @BindView(R.id.list)
     ViewPager pager;
-
     @BindView(R.id.search_view)
-    TextView searchView;
+    SearchView searchView;
     private ButtomListAdapter buttomListAdapter;
     private HorizontalListAdapter horizontalListAdapter;
     private HomePagerAdapter homePagerAdapter;
@@ -84,7 +82,7 @@ public class HomeFragment extends BaseFragment {
     int j = 8;
     private boolean isRefresh = false;
     private String ProductType = "1";
-    private List<ButtomListBean.DataEntity> dataEntities,homePagerListBean;
+    private List<ButtomListBean.DataEntity> dataEntities, homePagerListBean;
 
     @Override
     protected int getLayoutId() {
@@ -93,8 +91,6 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     public void init() {
-
-        scrollView.smoothScrollTo(0, 0);
         if (contentView == null) {
             contentView = scrollView.getChildAt(0);
         }
@@ -105,7 +101,7 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getContext(), ProductDetailsActivity.class);
-                intent.putExtra("productId",dataEntities.get(position).getID()+"");
+                intent.putExtra("productId", dataEntities.get(position).getID() + "");
                 startActivity(intent);
             }
         });
@@ -119,13 +115,30 @@ public class HomeFragment extends BaseFragment {
                 }
             }
         });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (TextUtils.isEmpty(query)){
+                    return false;
+                }
+                Intent intent = new Intent(getActivity(),AllProductActivity.class);
+                intent.putExtra("search",query);
+                intent.putExtra("ProdType", "-1");
+                startActivity(intent);
 
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -160,20 +173,21 @@ public class HomeFragment extends BaseFragment {
                 try {
                     result = response.body().string().toString();
                     Banner banner = MyApplication.gson.fromJson(result, Banner.class);
-                    if ("true".equals(banner.getSuccess())){
-                    List<Banner.DataEntity> data = banner.getData();
-                    for (int i = 0; i < data.size(); i++) {
-                        Banner.DataEntity dataEntity = data.get(i);
-                        TextSliderView textSliderView = new TextSliderView(getActivity());
-                        textSliderView.image(dataEntity.getLinkPic());
-                        textSliderView.setScaleType(BaseSliderView.ScaleType.Fit);
-                        slider.addSlider(textSliderView);
+                    if ("true".equals(banner.getSuccess())) {
+                        List<Banner.DataEntity> data = banner.getData();
+                        for (int i = 0; i < data.size(); i++) {
+                            Banner.DataEntity dataEntity = data.get(i);
+                            TextSliderView textSliderView = new TextSliderView(getActivity());
+                            textSliderView.image(dataEntity.getLinkPic());
+                            textSliderView.setScaleType(BaseSliderView.ScaleType.Fit);
+                            slider.addSlider(textSliderView);
 
-                        slider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
-                        slider.setCustomAnimation(new DescriptionAnimation());
-                        slider.setPresetTransformer(SliderLayout.Transformer.Default);
-                        slider.setDuration(3000);
-                    }}else {
+                            slider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+                            slider.setCustomAnimation(new DescriptionAnimation());
+                            slider.setPresetTransformer(SliderLayout.Transformer.Default);
+                            slider.setDuration(3000);
+                        }
+                    } else {
                         ToastUtils.showToast(banner.getMsg());
                     }
 
@@ -215,7 +229,7 @@ public class HomeFragment extends BaseFragment {
                 try {
                     String result = response.body().string().toString();
                     ButtomListBean bean = MyApplication.gson.fromJson(result, ButtomListBean.class);
-                    if ("true".equals(bean.getSuccess())){
+                    if ("true".equals(bean.getSuccess())) {
                         dataEntities = bean.getData();
                         if (ProductType == "1") {
                             dataEntities = bean.getData();
@@ -229,7 +243,8 @@ public class HomeFragment extends BaseFragment {
                             homePagerAdapter = new HomePagerAdapter(getChildFragmentManager(), homePagerListBean, result);
                             pager.setAdapter(homePagerAdapter);
                         }
-                    }else {
+                        scrollView.smoothScrollTo(0, 0);
+                    } else {
                         ToastUtils.showToast(bean.getMsg());
                     }
                 } catch (IOException e) {
@@ -245,12 +260,15 @@ public class HomeFragment extends BaseFragment {
     }
 
 
-    @OnClick({R.id.ll_all, R.id.ll_shopcar, R.id.ll_order, R.id.ll_member})
+    @OnClick({R.id.ll_all, R.id.ll_shopcar, R.id.ll_order, R.id.ll_member, R.id.tv_more_prod})
     public void onViewClicked(View view) {
         Intent intent = new Intent();
         switch (view.getId()) {
             case R.id.ll_all:
-//                intent.setClass(this)
+            case R.id.tv_more_prod:
+                intent.setClass(getActivity(), AllProductActivity.class);
+                intent.putExtra("ProdType", "-1");
+                startActivity(intent);
                 break;
             case R.id.ll_shopcar:
                 MainActivity.pager.setCurrentItem(1);
@@ -265,8 +283,6 @@ public class HomeFragment extends BaseFragment {
 
         }
     }
-
-
 }
 
 

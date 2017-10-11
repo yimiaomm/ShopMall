@@ -13,7 +13,7 @@ import cn.shoppingmall.viewHolder.CategorizeDetailProductViewHolder;
  * author：Anumbrella
  * Date：16/6/4 下午7:14
  */
-public class CategorizeDetailProductAdapter extends RecyclerArrayAdapter<ListProductContentModel> {
+public class CategorizeDetailProductAdapter extends RecyclerArrayAdapter<ListProductContentModel.DataEntity.DataListEntity> {
 
     public CategorizeDetailProductAdapter(Context context) {
         super(context);

@@ -1,163 +1,147 @@
 package cn.shoppingmall.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
-
-import java.util.HashMap;
+import java.util.List;
 
 /**
  * author：Anumbrella
  * Date：16/5/26 上午10:43
  */
-public class ListProductContentModel implements Parcelable {
-
-    private int pid;
-
-    private String title;
-
-    private int type;
-
-    private String imageUrl;
-
-    private float price;
-
-    private int color;
-
-    private int storage;
-
-    private int carrieroperator;
-
-    private int sum;
-
-    private int uid;
+public class ListProductContentModel{
 
 
-    public ListProductContentModel() {
+    /**
+     * success : true
+     * msg : 返回成功
+     * data : {"pageCount":8,"dataList":[{"ID":603,"ProdId":"65897489458548541","ProdName":"和田白玉五件套","Price1":8800,"Price2":8800,"PicUrl":"/uploads/shop/20170602/20170602181011_6110.jpg"},{"ID":602,"ProdId":"685989459848474","ProdName":"和田金镶玉","Price1":2680,"Price2":2680,"PicUrl":"/uploads/shop/20170602/20170602174021_0387.jpg"},{"ID":601,"ProdId":"6897787484447478","ProdName":"益生元青汁","Price1":298,"Price2":298,"PicUrl":"/uploads/shop/20170602/20170602173005_3912.jpg"},{"ID":600,"ProdId":"6859978484747447","ProdName":"排毒养颜精油","Price1":460,"Price2":460,"PicUrl":"/uploads/shop/20170602/20170602172806_8356.jpg"},{"ID":599,"ProdId":"689989458948484","ProdName":"控油调理精油","Price1":460,"Price2":460,"PicUrl":"/uploads/shop/20170602/20170602172639_9743.jpg"},{"ID":598,"ProdId":"6859858948454145","ProdName":"迷迭香精油","Price1":290,"Price2":290,"PicUrl":"/uploads/shop/20170602/20170602172509_8180.jpg"},{"ID":597,"ProdId":"685987945984584","ProdName":"腰背理疗精油","Price1":460,"Price2":460,"PicUrl":"/uploads/shop/20170602/20170602172351_3072.jpg"},{"ID":596,"ProdId":"66898797484484784","ProdName":"刮痧专用精油","Price1":460,"Price2":460,"PicUrl":"/uploads/shop/20170602/20170602172207_6520.jpg"},{"ID":595,"ProdId":"689897874848744","ProdName":"斑后巩固专用分解液","Price1":635,"Price2":635,"PicUrl":"/uploads/shop/20170602/20170602171843_8267.jpg"},{"ID":594,"ProdId":"6689484848444441","ProdName":"斑后巩固专用中药","Price1":1085,"Price2":1085,"PicUrl":"/uploads/shop/20170602/20170602171532_0856.jpg"}]}
+     * errcode :
+     */
 
+    private String success;
+    private String msg;
+    private DataEntity data;
+    private String errcode;
+
+    public void setSuccess(String success) {
+        this.success = success;
     }
 
-    protected ListProductContentModel(Parcel in) {
-        pid = in.readInt();
-        title = in.readString();
-        type = in.readInt();
-        imageUrl = in.readString();
-        price = in.readFloat();
-        color = in.readInt();
-        storage = in.readInt();
-        carrieroperator = in.readInt();
-        sum = in.readInt();
-        uid = in.readInt();
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(pid);
-        dest.writeString(title);
-        dest.writeInt(type);
-        dest.writeString(imageUrl);
-        dest.writeFloat(price);
-        dest.writeInt(color);
-        dest.writeInt(storage);
-        dest.writeInt(carrieroperator);
-        dest.writeInt(sum);
-        dest.writeInt(uid);
+    public void setData(DataEntity data) {
+        this.data = data;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setErrcode(String errcode) {
+        this.errcode = errcode;
     }
 
-    public static final Creator<ListProductContentModel> CREATOR = new Creator<ListProductContentModel>() {
-        @Override
-        public ListProductContentModel createFromParcel(Parcel in) {
-            return new ListProductContentModel(in);
+    public String getSuccess() {
+        return success;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public DataEntity getData() {
+        return data;
+    }
+
+    public String getErrcode() {
+        return errcode;
+    }
+
+    public static class DataEntity {
+        /**
+         * pageCount : 8
+         * dataList : [{"ID":603,"ProdId":"65897489458548541","ProdName":"和田白玉五件套","Price1":8800,"Price2":8800,"PicUrl":"/uploads/shop/20170602/20170602181011_6110.jpg"},{"ID":602,"ProdId":"685989459848474","ProdName":"和田金镶玉","Price1":2680,"Price2":2680,"PicUrl":"/uploads/shop/20170602/20170602174021_0387.jpg"},{"ID":601,"ProdId":"6897787484447478","ProdName":"益生元青汁","Price1":298,"Price2":298,"PicUrl":"/uploads/shop/20170602/20170602173005_3912.jpg"},{"ID":600,"ProdId":"6859978484747447","ProdName":"排毒养颜精油","Price1":460,"Price2":460,"PicUrl":"/uploads/shop/20170602/20170602172806_8356.jpg"},{"ID":599,"ProdId":"689989458948484","ProdName":"控油调理精油","Price1":460,"Price2":460,"PicUrl":"/uploads/shop/20170602/20170602172639_9743.jpg"},{"ID":598,"ProdId":"6859858948454145","ProdName":"迷迭香精油","Price1":290,"Price2":290,"PicUrl":"/uploads/shop/20170602/20170602172509_8180.jpg"},{"ID":597,"ProdId":"685987945984584","ProdName":"腰背理疗精油","Price1":460,"Price2":460,"PicUrl":"/uploads/shop/20170602/20170602172351_3072.jpg"},{"ID":596,"ProdId":"66898797484484784","ProdName":"刮痧专用精油","Price1":460,"Price2":460,"PicUrl":"/uploads/shop/20170602/20170602172207_6520.jpg"},{"ID":595,"ProdId":"689897874848744","ProdName":"斑后巩固专用分解液","Price1":635,"Price2":635,"PicUrl":"/uploads/shop/20170602/20170602171843_8267.jpg"},{"ID":594,"ProdId":"6689484848444441","ProdName":"斑后巩固专用中药","Price1":1085,"Price2":1085,"PicUrl":"/uploads/shop/20170602/20170602171532_0856.jpg"}]
+         */
+
+        private int pageCount;
+        private List<DataListEntity> dataList;
+
+        public void setPageCount(int pageCount) {
+            this.pageCount = pageCount;
         }
 
-        @Override
-        public ListProductContentModel[] newArray(int size) {
-            return new ListProductContentModel[size];
+        public void setDataList(List<DataListEntity> dataList) {
+            this.dataList = dataList;
         }
-    };
 
-    public int getPid() {
-        return pid;
-    }
+        public int getPageCount() {
+            return pageCount;
+        }
 
-    public void setPid(int pid) {
-        this.pid = pid;
-    }
+        public List<DataListEntity> getDataList() {
+            return dataList;
+        }
 
-    public String getTitle() {
-        return title;
-    }
+        public static class DataListEntity {
+            /**
+             * ID : 603
+             * ProdId : 65897489458548541
+             * ProdName : 和田白玉五件套
+             * Price1 : 8800.0
+             * Price2 : 8800.0
+             * PicUrl : /uploads/shop/20170602/20170602181011_6110.jpg
+             */
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+            private int ID;
+            private String ProdId;
+            private String ProdName;
+            private double Price1;
+            private double Price2;
+            private String PicUrl;
 
-    public int getType() {
-        return type;
-    }
+            public void setID(int ID) {
+                this.ID = ID;
+            }
 
-    public void setType(int type) {
-        this.type = type;
-    }
+            public void setProdId(String ProdId) {
+                this.ProdId = ProdId;
+            }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+            public void setProdName(String ProdName) {
+                this.ProdName = ProdName;
+            }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+            public void setPrice1(double Price1) {
+                this.Price1 = Price1;
+            }
 
-    public float getPrice() {
-        return price;
-    }
+            public void setPrice2(double Price2) {
+                this.Price2 = Price2;
+            }
 
-    public void setPrice(float price) {
-        this.price = price;
-    }
+            public void setPicUrl(String PicUrl) {
+                this.PicUrl = PicUrl;
+            }
 
-    public int getColor() {
-        return color;
-    }
+            public int getID() {
+                return ID;
+            }
 
-    public void setColor(int color) {
-        this.color = color;
-    }
+            public String getProdId() {
+                return ProdId;
+            }
 
-    public int getStorage() {
-        return storage;
-    }
+            public String getProdName() {
+                return ProdName;
+            }
 
-    public void setStorage(int storage) {
-        this.storage = storage;
-    }
+            public double getPrice1() {
+                return Price1;
+            }
 
-    public int getCarrieroperator() {
-        return carrieroperator;
-    }
+            public double getPrice2() {
+                return Price2;
+            }
 
-    public void setCarrieroperator(int carrieroperator) {
-        this.carrieroperator = carrieroperator;
-    }
-
-    public int getSum() {
-        return sum;
-    }
-
-    public void setSum(int sum) {
-        this.sum = sum;
-    }
-
-    public int getUid() {
-        return uid;
-    }
-
-    public void setUid(int uid) {
-        this.uid = uid;
+            public String getPicUrl() {
+                return PicUrl;
+            }
+        }
     }
 }
