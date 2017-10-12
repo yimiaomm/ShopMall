@@ -119,7 +119,7 @@ public class OrderListActivity extends BaseActivity {
     }
 
     private void getOrderCount() {
-//            UserId (string, optional): *用户名,
+//            UserId (string, optional): *用 户名,
 //            Token (string, optional): *登录凭证,
 //            timestamp (string, optional): *时间戳,
 //            nonce (string, optional): 随机数,
