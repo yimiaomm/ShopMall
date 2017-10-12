@@ -506,6 +506,9 @@ public class ShopCarFragment extends BaseFragment {
                 try {
                     String result = response.body().string();
                     carBean = MyApplication.gson.fromJson(result, ShopCarBean.class);
+                    if (carBean==null){
+                        return;
+                    }
                     List<ShopCarBean.DataEntity.ShopCartListEntity> shoplist = carBean.getData().getShopCartList();
                     shopping_spend.setText(carBean.getData().getTotalPrice());
                     shopping_data_count_sum.setText(carBean.getData().getTotalNum());

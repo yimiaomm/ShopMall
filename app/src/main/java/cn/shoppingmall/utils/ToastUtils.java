@@ -5,6 +5,9 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import cn.shoppingmall.MyApplication;
+import es.dmoral.toasty.Toasty;
+
+import static es.dmoral.toasty.Toasty.normal;
 
 /**
  * Created by ${易淼} on 2017/9/1.
@@ -13,16 +16,8 @@ import cn.shoppingmall.MyApplication;
  */
 
 public class ToastUtils {
-    private static Toast toast;
-
-
         public static void showToast(String text) {
-            if (toast == null) {
-                toast = Toast.makeText(MyApplication.getAppCtx(), text, Toast.LENGTH_SHORT);
-            }
-            toast.setText(text);
-            toast.setGravity(Gravity.CENTER,0,0);
-            toast.show();
+                 Toasty.normal(MyApplication.getAppCtx(),text,Gravity.CENTER).show();
         }
 
     }
