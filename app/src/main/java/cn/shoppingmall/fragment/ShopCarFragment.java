@@ -1,5 +1,6 @@
 package cn.shoppingmall.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -44,6 +46,7 @@ import cn.shoppingmall.greenDao.GreenDaoUtlis;
 import cn.shoppingmall.http.RetrofitHttp;
 import cn.shoppingmall.utils.NetUitls;
 import cn.shoppingmall.utils.ToastUtils;
+import cn.shoppingmall.view.PromptDialog;
 import cn.shoppingmall.viewHolder.ShoppingDataViewHolder;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
@@ -51,6 +54,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.R.attr.data;
 import static android.R.attr.id;
 import static android.media.CamcorderProfile.get;
 import static cn.shoppingmall.R.id.mRecyclerView;
@@ -84,8 +88,8 @@ public class ShopCarFragment extends BaseFragment {
     TextView tv_freight;
     @BindView(R.id.shopping_edit)
     TextView shopping_edit;
-    @BindView(R.id.check_all)
-    CheckBox check_all;
+
+    private  static CheckBox check_all;
     public static ShopCarFragment object = new ShopCarFragment();
 
 
@@ -123,7 +127,25 @@ public class ShopCarFragment extends BaseFragment {
         }
         super.onResume();
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        editActionState();
+        userinfo = new GreenDaoUtlis(getActivity()).queryDefult();
+        if (userinfo == null) {
+            recyclerView.setErrorView(R.layout.shopping_no_data_error);
+            return;
+        }
+        readShopCarList();
+    }
 
+
+    @Override
+    public void onPause() {
+        Log.e("","");
+        isEditState = false;
+        super.onPause();
+    }
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_shop_car;
@@ -131,7 +153,7 @@ public class ShopCarFragment extends BaseFragment {
 
     @Override
     public void init() {
-//        checkAll = (CheckBox) view.findViewById(R.id.check_all);
+        check_all = (CheckBox) view.findViewById(R.id.check_all);
         shopping_toal_data = (TextView) view.findViewById(R.id.shopping_toal_data);
         shopping_data_count_sum = (TextView) view.findViewById(R.id.shopping_data_count_sum);
         shopping_spend = (TextView) view.findViewById(R.id.shopping_spend);
@@ -140,11 +162,20 @@ public class ShopCarFragment extends BaseFragment {
         check_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                if (isCheckAll.equals("0")){
+                    isCheckAll="-1";
+                }else {
+                    updataShopCartMulti(isChecked);
+                }
             }
         });
+        adapter = new ShoppingDataAdapter(cxt);
+        girdLayoutManager = new GridLayoutManager(getActivity(), 2);
+        girdLayoutManager.setSpanSizeLookup(adapter.obtainTipSpanSizeLookUp());
+        recyclerView.setLayoutManager(girdLayoutManager);
 
     }
+
 
     private void deleteMit(){
 //        UserId (string, optional): *用户名 ,
@@ -155,7 +186,19 @@ public class ShopCarFragment extends BaseFragment {
             ToastUtils.showToast("请添加商品");
             return;
         }
-        List<ShopCarBean.DataEntity.ShopCartListEntity>list = carBean.getData().getShopCartList();
+        if (!carBean.getSuccess().equals("true")){
+            return;
+        }
+        ShopCarBean.DataEntity dataEntity = carBean.getData();
+
+        if (dataEntity==null){
+            return;
+        }
+        List<ShopCarBean.DataEntity.ShopCartListEntity>list = dataEntity.getShopCartList();
+        if (list.size()<=0||list==null){
+            ToastUtils.showToast("请添加商品");
+            return;
+        }
 
         Map<String,String>map = new HashMap<>();
         map.put("UserId",userinfo.getUserId());
@@ -171,8 +214,8 @@ public class ShopCarFragment extends BaseFragment {
             ToastUtils.showToast("请选择删除商品");
             return;
         }
-
-        map.put("IDList",str.toString());
+        String newstr = str.subSequence(0,str.lastIndexOf(",")).toString();
+        map.put("IDList",newstr);
         map.put("Token",userinfo.getToken());
         map = NetUitls.getHashMapData(map);
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -183,8 +226,16 @@ public class ShopCarFragment extends BaseFragment {
             @Override
             public void onResponse(Response<ResponseBody> response) {
                 try {
+// {"success":true,"msg":"删除成功","data":{"TotalNum":0,"TotalPrice":0.0,"Freight":0.0,"ShopCartList":[]},"errcode":""}
                     String result  = response.body().string().toString();
-                    ToastUtils.showToast(result);
+                    ShopCarBean carBeans = MyApplication.gson.fromJson(result,ShopCarBean.class);
+                    if (carBeans.getSuccess().equals("true")){
+                        carBean = carBeans;
+                        initData();
+                        specialUpdate();
+                    }else {
+                        ToastUtils.showToast(carBeans.getMsg());
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -225,34 +276,9 @@ public class ShopCarFragment extends BaseFragment {
                         recyclerView.setErrorView(R.layout.shopping_no_data_error);
                         return;
                     }
-
-                    List<ShopCarBean.DataEntity.ShopCartListEntity> list = carBean.getData().getShopCartList();
-
-                    List<String> numList = new ArrayList<>();
                     if ("true".equals(carBean.getSuccess())) {
-                        shopping_spend.setText(carBean.getData().getTotalPrice());
-                        shopping_data_count_sum.setText(carBean.getData().getTotalNum());
-                        adapter = new ShoppingDataAdapter(cxt);
-                        for (int i = 0; i < list.size(); i++) {
-                            ShopCarBean.DataEntity.ShopCartListEntity entity = list.get(i);
-                            String isCheck = entity.getIsCheck();
-                            list.get(i).setPid(i);
-                            if (isCheck.equals("true")) {
-                                numList.add("" + i);
-                                adapter.setCheckBoolean(i, true);
-                            } else {
-                                adapter.setCheckBoolean(i, false);
-                            }
-                        }
-                        adapter.addAll(carBean.getData().getShopCartList());
-                        if (numList.size() == adapter.getCount()) {
-//                            checkAll.setChecked(true);
-                        }
-                        recyclerView.setAdapterWithProgress(adapter);
+                        initData();
                         if (adapter.getCount() != 0) {
-                            girdLayoutManager = new GridLayoutManager(getActivity(), 2);
-                            girdLayoutManager.setSpanSizeLookup(adapter.obtainTipSpanSizeLookUp());
-                            recyclerView.setLayoutManager(girdLayoutManager);
                             if (action_layout.getVisibility() == View.GONE) {
                                 action_layout.setVisibility(View.VISIBLE);
                             }
@@ -263,14 +289,7 @@ public class ShopCarFragment extends BaseFragment {
 
                             }
                         }
-                        shopping_toal_data.setText("(" + String.valueOf(adapter.getCount()) + ")");
                     }
-                    adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(int position) {
-                            ToastUtils.showToast("" + position);
-                        }
-                    });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -283,6 +302,42 @@ public class ShopCarFragment extends BaseFragment {
         });
     }
 
+    private static void initData(){
+        List<ShopCarBean.DataEntity.ShopCartListEntity> shoplist = carBean.getData().getShopCartList();
+        if (adapter.getCount() != 0) {
+            adapter.clear();
+        }
+        adapter.addAll(shoplist);
+        List<String> numList = new ArrayList<>();
+        for (int i = 0; i < shoplist.size(); i++) {
+            ShopCarBean.DataEntity.ShopCartListEntity entity = shoplist.get(i);
+            String isCheck = entity.getIsCheck();
+            shoplist.get(i).setPid(i);
+            if (isCheck.equals("true")) {
+                numList.add("" + i);
+                adapter.setCheckBoolean(i, true);
+            } else {
+                adapter.setCheckBoolean(i, false);
+            }
+        }
+
+        if (shoplist.size()<=0){
+            check_all.setClickable(false);
+        }else {
+            check_all.setClickable(true);
+        }
+        if (numList.size()==adapter.getCount()){
+            isCheckAll = "0";
+            check_all.setChecked(true);
+        }else {
+            check_all.setChecked(false);
+        }
+        recyclerView.setAdapterWithProgress(adapter);
+        specialUpdate();
+        shopping_spend.setText(carBean.getData().getTotalPrice());
+        shopping_data_count_sum.setText(carBean.getData().getTotalNum());
+        shopping_toal_data.setText("(" + String.valueOf(adapter.getCount()) + ")");
+    }
     public void checkAllState() {
         Iterator iterator = adapter.getIsCheckList().entrySet().iterator();
         while (iterator.hasNext()) {
@@ -326,23 +381,14 @@ public class ShopCarFragment extends BaseFragment {
         return true;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        editActionState();
-        userinfo = new GreenDaoUtlis(getActivity()).queryDefult();
-        if (userinfo == null) {
-            recyclerView.setErrorView(R.layout.shopping_no_data_error);
-            return;
-        }
-        readShopCarList();
-
-    }
 
 
-    @OnClick({R.id.shopping_pay, R.id.shopping_edit, R.id.tv_delete})
+
+    @OnClick({R.id.shopping_pay, R.id.shopping_edit, R.id.tv_delete,R.id.check_all})
     public void click(View view) {
         switch (view.getId()) {
+            case R.id.check_all:
+                break;
             case R.id.shopping_edit:
                 if (isEditState) {
                     editActionState();
@@ -351,9 +397,58 @@ public class ShopCarFragment extends BaseFragment {
                 }
                 break;
             case R.id.tv_delete:
-                deleteMit();
+                new PromptDialog.Builder(getContext())
+                        .setTitle("提示")
+                        .setTitleColor(R.color.white)
+                        .setViewStyle(PromptDialog.VIEW_STYLE_TITLEBAR_SKYBLUE)
+                        .setMessage("确定删除这些商品吗?")
+                        .setMessageSize(20f)
+                        .setButton1("确定", new PromptDialog.OnClickListener() {
+                            @Override
+                            public void onClick(Dialog dialog, int which) {
+                                deleteMit();
+                                dialog.dismiss();
+                            }
+                        })
+                        .setButton2("取消", new PromptDialog.OnClickListener() {
+                            @Override
+                            public void onClick(Dialog dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
                 break;
             case R.id.shopping_pay:
+                if (null ==carBean){
+                    ToastUtils.showToast("请添加商品");
+                    return;
+                }
+                if (!carBean.getSuccess().equals("true")){
+                    return;
+                }
+                ShopCarBean.DataEntity dataEntity = carBean.getData();
+
+                if (dataEntity==null){
+                    return;
+                }
+                List<ShopCarBean.DataEntity.ShopCartListEntity>list = dataEntity.getShopCartList();
+                if (list.size()<=0||list==null){
+                    ToastUtils.showToast("请添加商品");
+                    return;
+                }
+
+                StringBuffer str = new StringBuffer();
+                for (int i = 0;i<list.size();i++){
+                    String isCheck = list.get(i).getIsCheck();
+                    if ("true".equals(isCheck)){
+                        str.append(list.get(i).getID());
+                    }
+                }
+                if (TextUtils.isEmpty(str)){
+                    ToastUtils.showToast("请选择结算商品");
+                    return;
+                }
+
                 Intent intent = new Intent(getActivity(), ShopCarDeatil.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("CartBean", carBean.getData());
@@ -408,12 +503,7 @@ public class ShopCarFragment extends BaseFragment {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onPause() {
-//        ShoppingDataAdapter.setDisplay(false);
-        isEditState = false;
-        super.onPause();
-    }
+
 
     //删除操作
     public static void deleteOrder(String ID) {
@@ -438,31 +528,15 @@ public class ShopCarFragment extends BaseFragment {
             public void onResponse(Response<ResponseBody> response) {
                 try {
                     String result = response.body().string().toString();
-                    carBean = MyApplication.gson.fromJson(result, ShopCarBean.class);
+                    ShopCarBean carBeans = MyApplication.gson.fromJson(result, ShopCarBean.class);
 
-                    if ("true".equals(carBean.getSuccess())) {
+                    if ("true".equals(carBeans.getSuccess())) {
+                        carBean = carBeans;
                         ToastUtils.showToast(carBean.getMsg());
-                        List<ShopCarBean.DataEntity.ShopCartListEntity> list = carBean.getData().getShopCartList();
-                        for (int i = 0; i < list.size(); i++) {
-                            ShopCarBean.DataEntity.ShopCartListEntity entity = list.get(i);
-                            String isCheck = entity.getIsCheck();
-                            list.get(i).setPid(i);
-                            if (isCheck.equals("true")) {
-                                adapter.setCheckBoolean(i, true);
-                            } else {
-                                adapter.setCheckBoolean(i, false);
-                            }
-                        }
-                        if (adapter.getCount() != 0) {
-                            adapter.clear();
-                            adapter.addAll(list);
-                        }
-                        shopping_toal_data.setText("(" + String.valueOf(adapter.getCount()) + ")");
-                        shopping_spend.setText(carBean.getData().getTotalPrice());
-                        shopping_data_count_sum.setText(carBean.getData().getTotalNum());
+                        initData();
                         specialUpdate();
                     } else {
-                        ToastUtils.showToast(carBean.getMsg());
+                        ToastUtils.showToast(carBeans.getMsg());
                     }
 
                 } catch (IOException e) {
@@ -498,36 +572,63 @@ public class ShopCarFragment extends BaseFragment {
         updataShopCarresult(RetrofitHttp.getRetrofit(builder.build()).updateShopCar(map));
     }
 
-    private static void updataShopCarresult(Call<ResponseBody> call) {
-        call.clone();
+    private static void updataShopCarresult(final Call<ResponseBody> call) {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Response<ResponseBody> response) {
                 try {
                     String result = response.body().string();
-                    carBean = MyApplication.gson.fromJson(result, ShopCarBean.class);
-                    if (carBean==null){
+                    ShopCarBean carBeans = MyApplication.gson.fromJson(result, ShopCarBean.class);
+                    if (carBeans.getSuccess().equals("true")){
+                        carBean = carBeans;
+                        if (carBean==null){
+                            adapter.clear();
+                            specialUpdate();
+                            return;
+                        }
+                        initData();
+                        specialUpdate();
+                    }else {
+                        ToastUtils.showToast(carBeans.getMsg());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+    }
+    private void updataShopCartMulti(boolean isCheck){
+        Map<String,String>map = new HashMap<>();
+        map.put("UserId",userinfo.getUserId());
+        map.put("IDList","");
+        map.put("IsCheck",""+isCheck);
+        map.put("Token",userinfo.getToken());
+        map = NetUitls.getHashMapData(map);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        updataShopCartMultiResult(RetrofitHttp.getRetrofit(builder.build()).updataShopCartMulti(map));
+    }
+    private void updataShopCartMultiResult(final Call<ResponseBody>call){
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Response<ResponseBody> response) {
+                try {
+                    ResponseBody body = response.body();
+                    if (body==null)return;
+                    String result = response.body().string().toString();
+                    if (result==null){
                         return;
                     }
-                    List<ShopCarBean.DataEntity.ShopCartListEntity> shoplist = carBean.getData().getShopCartList();
-                    shopping_spend.setText(carBean.getData().getTotalPrice());
-                    shopping_data_count_sum.setText(carBean.getData().getTotalNum());
-                    if (adapter.getCount() != 0) {
-                        adapter.clear();
-                        adapter.addAll(shoplist);
+                    ShopCarBean carBeans = MyApplication.gson.fromJson(result,ShopCarBean.class);
+                    if ("true".equals(carBeans.getSuccess())){
+                        carBean = carBeans;
+                        initData();
+                    }else {
+                        ToastUtils.showToast(carBeans.getMsg());
                     }
-                    for (int i = 0; i < shoplist.size(); i++) {
-                        ShopCarBean.DataEntity.ShopCartListEntity entity = shoplist.get(i);
-                        String isCheck = entity.getIsCheck();
-                        shoplist.get(i).setPid(i);
-                        if (isCheck.equals("true")) {
-                            adapter.setCheckBoolean(i, true);
-                        } else {
-                            adapter.setCheckBoolean(i, false);
-                        }
-                    }
-
-//                    specialUpdate();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -539,5 +640,4 @@ public class ShopCarFragment extends BaseFragment {
             }
         });
     }
-
 }
